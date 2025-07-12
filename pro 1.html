@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Scene Investigation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .title {
+            font-size: 2.5em;
+            color: #ff6b6b;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #ffd93d;
+            opacity: 0.9;
+        }
+
+        .case-info {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .scene-container {
+            position: relative;
+            background: linear-gradient(45deg, #2c2c54, #40407a);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .room {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: #4a4a75;
+            border: 3px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .evidence {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #ffd93d;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 15px rgba(255, 217, 61, 0.8);
+        }
+
+        .evidence:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 25px rgba(255, 217, 61, 1);
+        }
+
+        .evidence.found {
+            background: #6bcf7f;
+            box-shadow: 0 0 15px rgba(107, 207, 127, 0.8);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .furniture {
+            position: absolute;
+            background: #2c2c54;
+            border: 2px solid #444;
+            border-radius: 5px;
+        }
+
+        .desk {
+            width: 120px;
+            height: 60px;
+            top: 200px;
+            left: 100px;
+            background: #8b4513;
+        }
+
+        .chair {
+            width: 40px;
+            height: 40px;
+            top: 170px;
+            left: 80px;
+            background: #654321;
+            border-radius: 50% 50% 10px 10px;
+        }
+
+        .bookshelf {
+            width: 80px;
+            height: 200px;
+            top: 50px;
+            right: 50px;
+            background: #4a4a75;
+        }
+
+        .door {
+            width: 60px;
+            height: 120px;
+            top: 190px;
+            left: 0;
+            background: #654321;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .window {
+            width: 100px;
+            height: 80px;
+            top: 30px;
+            left: 200px;
+            background: #87ceeb;
+            border: 3px solid #333;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .panel h3 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .evidence-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .evidence-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .evidence-item.collected {
+            background: rgba(107, 207, 127, 0.3);
+            border-left: 4px solid #6bcf7f;
+        }
+
+        .suspect-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suspect-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .suspect-card h4 {
+            color: #ffd93d;
+            margin-bottom: 5px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            margin: 5px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2c2c54, #40407a);
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #ff6b6b;
+        }
+
+        .close:hover {
+            color: #ff8e8e;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #6bcf7f, #8dd99c);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #6bcf7f;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(107, 207, 127, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .timer {
+            font-size: 1.2em;
+            color: #ffd93d;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .room {
+                height: 400px;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🔍 Crime Scene Investigation</h1>
+            <p class="subtitle">The Case of the Missing Diamond</p>
+        </div>
+
+        <div class="case-info">
+            <h3>Case Brief</h3>
+            <p>A priceless diamond has been stolen from the wealthy collector's study. The room has been sealed off, and you're the lead detective. Search for clues, interview suspects, and solve the mystery!</p>
+            <div class="timer" id="timer">Investigation Time: 00:00</div>
+        </div>
+
+        <div class="scene-container">
+            <h3 style="margin-bottom: 20px; color: #ffd93d;">🏠 Crime Scene - Study Room</h3>
+            <div class="room" id="crimeScene">
+                <!-- Furniture -->
+                <div class="furniture desk"></div>
+                <div class="furniture chair"></div>
+                <div class="furniture bookshelf"></div>
+                <div class="furniture door"></div>
+                <div class="furniture window"></div>
+                
+                <!-- Evidence Points -->
+                <div class="evidence" data-evidence="fingerprints" style="top: 180px; left: 150px;" title="Suspicious fingerprints"></div>
+                <div class="evidence" data-evidence="footprint" style="top: 300px; left: 200px;" title="Muddy footprint"></div>
+                <div class="evidence" data-evidence="broken-glass" style="top: 250px; left: 300px;" title="Broken glass"></div>
+                <div class="evidence" data-evidence="letter" style="top: 220px; left: 120px;" title="Torn letter"></div>
+                <div class="evidence" data-evidence="key" style="top: 400px; left: 250px;" title="Mysterious key"></div>
+                <div class="evidence" data-evidence="photo" style="top: 100px; right: 60px;" title="Hidden photograph"></div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p style="text-align: center; margin-top: 10px;">Evidence Found: <span id="evidenceCount">0</span>/6</p>
+        </div>
+
+        <div class="controls">
+            <div class="panel">
+                <h3>📋 Evidence Collected</h3>
+                <ul class="evidence-list" id="evidenceList">
+                    <li class="evidence-item" data-evidence="fingerprints">🔍 Fingerprints - Not found</li>
+                    <li class="evidence-item" data-evidence="footprint">👣 Footprint - Not found</li>
+                    <li class="evidence-item" data-evidence="broken-glass">🪟 Broken Glass - Not found</li>
+                    <li class="evidence-item" data-evidence="letter">📝 Torn Letter - Not found</li>
+                    <li class="evidence-item" data-evidence="key">🔑 Mysterious Key - Not found</li>
+                    <li class="evidence-item" data-evidence="photo">📸 Hidden Photo - Not found</li>
+                </ul>
+            </div>
+
+            <div class="panel">
+                <h3>🕵️ Suspects</h3>
+                <div class="suspect-card" data-suspect="butler">
+                    <h4>Raaju the Butler</h4>
+                    <p>Had access to all rooms. Claims he was cleaning elsewhere.</p>
+                </div>
+                <div class="suspect-card" data-suspect="maid">
+                    <h4>Sarah the Maid</h4>
+                    <p>Noticed the diamond was missing. Was last seen near the study.</p>
+                </div>
+                <div class="suspect-card" data-suspect="guest">
+                    <h4>Mr. Swami (Guest)</h4>
+                    <p>Visited the study earlier. Has financial troubles.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>🎯 Investigation Tools</h3>
+                <button class="btn" onclick="analyzeEvidence()">🔬 Analyze Evidence</button>
+                <button class="btn" onclick="makeAccusation()">⚖️ Make Accusation</button>
+                <button class="btn" onclick="resetInvestigation()">🔄 Reset Case</button>
+                <button class="btn" onclick="showHint()">💡 Get Hint</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Evidence Details -->
+    <div id="evidenceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Evidence Details</h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal for Suspect Interview -->
+    <div id="suspectModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSuspectModal()">&times;</span>
+            <h2 id="suspectModalTitle">Suspect Interview</h2>
+            <div id="suspectModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        let evidenceFound = 0;
+        let totalEvidence = 6;
+        let startTime = Date.now();
+        let timerInterval;
+
+        const evidenceData = {
+            fingerprints: {
+                title: "Fingerprints on Desk",
+                description: "Fresh fingerprints found on the desk surface. The prints appear to be from someone with small hands, possibly a woman. They're concentrated around where the diamond display case was located.",
+                analysis: "These prints don't match the owner. The pattern suggests someone was nervous, with smudged areas indicating trembling hands."
+            },
+            footprint: {
+                title: "Muddy Footprint",
+                description: "A single muddy footprint near the window. Size 7 shoe, with a distinctive wear pattern on the heel. The mud appears fresh, containing grass and garden soil.",
+                analysis: "This footprint suggests someone entered through the garden. The size and wear pattern could help identify the intruder."
+            },
+            "broken-glass": {
+                title: "Broken Glass Fragments",
+                description: "Small pieces of crystal glass scattered on the floor. They appear to be from a wine glass, with traces of red wine still visible on some fragments.",
+                analysis: "Someone was drinking wine and dropped the glass, possibly in surprise or haste. No fingerprints on the glass pieces."
+            },
+            letter: {
+                title: "Torn Letter",
+                description: "A partially torn letter with financial documents visible. The visible text mentions 'urgent payment' and 'final notice'. The paper is expensive letterhead.",
+                analysis: "This appears to be a debt collection letter. Someone was under serious financial pressure."
+            },
+            key: {
+                title: "Mysterious Key",
+                description: "A small brass key that doesn't match any locks in the house. It's old and ornate, with the number '247' engraved on it. Shows signs of recent use.",
+                analysis: "This key might open a safety deposit box or storage unit. The number could be significant."
+            },
+            photo: {
+                title: "Hidden Photograph",
+                description: "A photograph hidden behind books showing the diamond and its security system. Someone had been studying the display case carefully.",
+                analysis: "This photo shows detailed knowledge of the security setup. It was taken recently, indicating premeditation."
+            }
+        };
+
+        const suspectData = {
+            butler: {
+                name: "Raaju the Butler",
+                interview: "I've worked here for 15 years! I would never steal from the master. I was polishing the silver in the dining room when it happened. You can check with the cook, she saw me there.",
+                alibi: "Claims to have been in dining room with cook as witness",
+                motive: "Low - loyal employee with good record"
+            },
+            maid: {
+                name: "Sarah the Maid",
+                interview: "I discovered the diamond was missing when I came to dust the study. I always clean that room at 3 PM. I noticed the glass case was open and raised the alarm immediately. I have small hands, yes, but I never touched that case!",
+                alibi: "Was cleaning the study when theft was discovered",
+                motive: "Medium - had access and opportunity, small hands match fingerprints"
+            },
+            guest: {
+                name: "Mr. Swami",
+                interview: "I was admiring the diamond collection earlier, yes. Such beautiful pieces! I have some financial difficulties, but I'm not a thief. I was in the garden having a smoke when it happened. These are my garden shoes - I borrowed them from the shed.",
+                alibi: "Claims to have been in garden smoking",
+                motive: "High - financial troubles, was in garden (mud evidence), size 7 shoes"
+            }
+        };
+
+        // Initialize timer
+        timerInterval = setInterval(updateTimer, 1000);
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent = 
+                `Investigation Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Evidence click handling
+        document.querySelectorAll('.evidence').forEach(evidence => {
+            evidence.addEventListener('click', function() {
+                const evidenceType = this.dataset.evidence;
+                if (!this.classList.contains('found')) {
+                    this.classList.add('found');
+                    evidenceFound++;
+                    updateProgress();
+                    updateEvidenceList(evidenceType);
+                    showNotification(`Evidence found: ${evidenceData[evidenceType].title}`);
+                }
+                showEvidenceModal(evidenceType);
+            });
+        });
+
+        // Suspect click handling
+        document.querySelectorAll('.suspect-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const suspect = this.dataset.suspect;
+                showSuspectModal(suspect);
+            });
+        });
+
+        function updateProgress() {
+            const percentage = (evidenceFound / totalEvidence) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('evidenceCount').textContent = evidenceFound;
+        }
+
+        function updateEvidenceList(evidenceType) {
+            const listItem = document.querySelector(`#evidenceList [data-evidence="${evidenceType}"]`);
+            if (listItem) {
+                listItem.classList.add('collected');
+                listItem.innerHTML = listItem.innerHTML.replace('Not found', 'Found ✓');
+            }
+        }
+
+        function showEvidenceModal(evidenceType) {
+            const modal = document.getElementById('evidenceModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            const evidence = evidenceData[evidenceType];
+            title.textContent = evidence.title;
+            content.innerHTML = `
+                <p><strong>Description:</strong> ${evidence.description}</p>
+                <br>
+                <p><strong>Analysis:</strong> ${evidence.analysis}</p>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function showSuspectModal(suspect) {
+            const modal = document.getElementById('suspectModal');
+            const title = document.getElementById('suspectModalTitle');
+            const content = document.getElementById('suspectModalContent');
+            
+            const suspectInfo = suspectData[suspect];
+            title.textContent = `Interview: ${suspectInfo.name}`;
+            content.innerHTML = `
+                <p><strong>Statement:</strong> "${suspectInfo.interview}"</p>
+                <br>
+                <p><strong>Alibi:</strong> ${suspectInfo.alibi}</p>
+                <br>
+                <p><strong>Motive Level:</strong> ${suspectInfo.motive}</p>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('evidenceModal').style.display = 'none';
+        }
+
+        function closeSuspectModal() {
+            document.getElementById('suspectModal').style.display = 'none';
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function analyzeEvidence() {
+            if (evidenceFound < 3) {
+                showNotification('You need to collect more evidence before analysis!');
+                return;
+            }
+            
+            let analysis = "Evidence Analysis:\n\n";
+            analysis += "• Small handprints and maid's access suggest Sarah had opportunity\n";
+            analysis += "• Muddy footprint and financial troubles point to Mr. Swami\n";
+            analysis += "• The hidden photograph shows premeditation\n\n";
+            analysis += "The evidence suggests Mr. Swami as the prime suspect!";
+            
+            alert(analysis);
+        }
+
+        function makeAccusation() {
+            if (evidenceFound < 4) {
+                showNotification('Collect more evidence before making an accusation!');
+                return;
+            }
+            
+            const suspect = prompt("Who do you accuse? (butler/maid/guest)");
+            
+            if (suspect === 'guest' || suspect === 'Swami') {
+                alert("🎉 Correct! Mr. Swami is the thief!\n\nSolution: Swami's financial troubles motivated the theft. He studied the security system (photo), entered through the garden (footprint), and his size 7 shoes match the evidence. The small fingerprints were from when he nervously touched the display case.");
+            } else if (suspect === 'maid' || suspect === 'sarah') {
+                alert("❌ Incorrect. While Sarah had access and small hands, she has a solid alibi and no motive for theft.");
+            } else if (suspect === 'butler' || suspect === 'james') {
+                alert("❌ Incorrect. Raaju has been loyal for 15 years and has a strong alibi with the cook.");
+            } else {
+                alert("Please enter a valid suspect name.");
+            }
+        }
+
+        function showHint() {
+            const hints = [
+                "Look for evidence that connects means, motive, and opportunity.",
+                "The muddy footprint suggests someone came from outside.",
+                "Financial troubles can be a strong motive for theft.",
+                "The hidden photograph shows someone planned this carefully.",
+                "Check shoe sizes against the footprint evidence."
+            ];
+            
+            const randomHint = hints[Math.floor(Math.random() * hints.length)];
+            showNotification(`💡 Hint: ${randomHint}`);
+        }
+
+        function resetInvestigation() {
+            if (confirm("Are you sure you want to reset the investigation?")) {
+                location.reload();
+            }
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const evidenceModal = document.getElementById('evidenceModal');
+            const suspectModal = document.getElementById('suspectModal');
+            
+            if (event.target === evidenceModal) {
+                evidenceModal.style.display = 'none';
+            }
+            if (event.target === suspectModal) {
+                suspectModal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
